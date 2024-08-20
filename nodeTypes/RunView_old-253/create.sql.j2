@@ -1,0 +1,58 @@
+{% if desiredState == currentState %}
+
+{{ stage('No Changes') }}
+select 1 = 0
+
+{% elif desiredState %}
+    {% if desiredState.node.override.create.enabled %}
+            
+        {{ desiredState.node.override.create.script }}
+
+    {% else %}
+        {{ stage('Create View') }}
+        CREATE OR REPLACE VIEW {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}
+        (
+            {% for col in desiredState.columns %}
+                "{{ col.name }}"
+                {%- if col.description | length > 0 %} COMMENT '{{ col.description | escape }}'{% endif %}
+                {%- if not loop.last -%}, {% endif %}
+            {% endfor %}
+        )
+        {%- if desiredState.node.description | length > 0 %} COMMENT = '{{ desiredState.node.description | escape }}'{% endif %}
+        AS
+        {% for source in desiredState.sources %}
+            SELECT {% if desiredState.config.selectDistinct %} DISTINCT {% endif %}
+            {% for col in source.columns %}
+                {{ get_source_transform(col) }} AS "{{ col.name }}"
+                {%- if not loop.last -%}, {% endif %}
+            {% endfor %}
+
+            {{ source.join }}
+
+            {% if not loop.last %}
+                {% if desiredState.config.insertStrategy in ['UNION', 'UNION ALL'] %}
+                    {{ desiredState.config.insertStrategy }}
+                {% else %}
+                    UNION
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+{% elif currentState != undefined and desiredState == undefined %}
+
+    {# Materialized View Name #}
+    {% set targetViewDatabase = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[0] %} 
+    {% set targetViewSchema = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[1] %} 
+    {% set fullyQualifiedTargetViewName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
+
+    {{ stage('Drop Materialized View', true, "sql", "drop") }}
+    DROP VIEW IF EXISTS {{ fullyQualifiedTargetViewName }}
+
+
+{%- else -%}
+
+{{ stage('Unknown State') }}
+select 1 = 0
+
+{% endif %}

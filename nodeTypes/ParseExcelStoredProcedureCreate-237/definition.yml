@@ -1,0 +1,28 @@
+fileVersion: 1
+id: "237"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |-
+    capitalized: PARSE EXCEL STORED PROCEDURE CREATE
+    short: SP_EXCEL
+    plural: none
+    tagColor: 'aqua'
+    config:
+    - groupName: Options
+      items:
+
+      - displayName: Stored Procedure Storage Location
+        attributeName: spLocation
+        type: dropdownSelector
+        default: "TARGET_DB"
+        options:
+        - "TGT"
+        - "CPY"
+        - "SRC"
+        - "TARGET_DB"
+        - "DT"
+        - "JSON"
+name: Parse Excel Stored Procedure Create
+type: NodeType

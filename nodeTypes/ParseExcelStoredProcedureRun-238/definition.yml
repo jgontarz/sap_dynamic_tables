@@ -1,0 +1,61 @@
+fileVersion: 1
+id: "238"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |-
+    capitalized: Parse Excel Stored Procedure Run
+    short: EL
+    plural: none
+    tagColor: 'aqua'
+    config:
+    - groupName: Stored Procedure Options
+      items:
+
+      - displayName: Stored Procedure Storage Location
+        attributeName: spLocation
+        type: dropdownSelector
+        default: "TARGET_DB"
+        options:
+        - "TGT"
+        - "CPY"
+        - "SRC"
+        - "TARGET_DB"
+        - "DT"
+        - "JSON"
+        
+    - groupName: Excel File Processing Options
+      items:
+      - displayName: Source File Storage Location
+        attributeName: srcFileStrLoc
+        type: dropdownSelector
+        default: "SAMPLE_SOURCE"
+        options:
+        - "TGT"
+        - "CPY"
+        - "SRC"
+        - "SAMPLE_SOURCE"
+        - "DT"
+        - "JSON"
+
+      - displayName: Source File Stage
+        attributeName: srcStage
+        type: textBox
+        default: stage_name
+        isRequired: true
+
+      - displayName: Source File Name
+        attributeName: srcFile
+        type: textBox
+        default: file.xlsx
+        isRequired: true
+
+    systemColumns:
+    - displayName: 'SRC'
+      attributeName: src
+      transform: ''
+      dataType: VARIANT
+      placement: beginning
+name: Parse Excel Stored Procedure Run
+type: NodeType
